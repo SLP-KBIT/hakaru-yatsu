@@ -1,0 +1,19 @@
+extends ./layout
+
+block content
+
+  h1= id
+
+  ul#user-list
+
+  script(type='text/javascript' src='/socket.io/socket.io.js')
+  script(type='text/javascript' data-name=name id='main').
+    (function() {
+      var socket = io();
+      var name = $('#main').data('name');
+      socket.emit('join', {name: name});
+      socket.on('joined', function (data) {
+        console.log(data);
+        $('#user-list').append('<li>' + data.name + '</li>');
+      });
+    }).call(this);

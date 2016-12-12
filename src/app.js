@@ -19,23 +19,26 @@ app.get('/', (req, res) => (
 
 app.post('/new', (req, res) => {
   const session = new Session()
-  res.redirect('/' + session.id);
+  res.redirect('/' + session.id + '?name=' + req.body.name);
 })
 
 app.post('/join', (req, res) => {
   if ( Session.isExist(req.body.id) ) {
-    res.redirect('/' + req.body.id);
+    res.redirect('/' + req.body.id + '?name=' + req.body.name);
   } else {
     res.render('index', {title: 'Hakaru Yatsu', alert: 'The Session is not Exist!'})
   }
 })
 
 app.get('/:id', (req, res) => {
-  res.send(req.params.id);
+  res.render('session', {title: 'Hakaru Yatsu', id: req.params.id, name: req.query.name})
 })
 
 io.on('connect', function(socket) {
   console.log('connected');
+  socket.on('join', function (data) {
+    io.sockets.emit('joined', {name: data.name})
+  });
 });
 
 server.listen(3000, function () {

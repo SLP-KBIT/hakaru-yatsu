@@ -1,16 +1,18 @@
-doctype html
-html
-  head
-    meta(http-equiv="Content-Type", content="text/html; charset=UTF-8")
-    title= title
-  body
-    h1 Hakaru Yatsu
-    pre 月例発表の質問時間を測るやつ
-    form(method='post', action='/new')
-      input(type='submit', value='Start New Session')
-    h4 OR
-    form(method='post', action='/join')
-      input(type='number', name='id')
-      input(type='submit', value='Join Session')
-    if typeof(alert) !== 'undefined'
-      div.alert= alert
+extends ./layout
+
+block content
+  h1 Hakaru Yatsu
+  pre 月例発表の質問時間を測るやつ
+  form(method='post', action='/new')
+    label name
+    input(type='text' name='name')
+    input(type='submit', value='Start New Session')
+  h4 OR
+  form(method='post', action='/join')
+    label name
+    input(type='text' name='name')
+    label id
+    input(type='number', name='id')
+    input(type='submit', value='Join Session')
+  if typeof(alert) !== 'undefined'
+    div.alert= alert
