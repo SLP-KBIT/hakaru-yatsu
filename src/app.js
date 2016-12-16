@@ -41,7 +41,9 @@ io.on('connect', function(socket) {
   });
 });
 
-server.listen(3000, function () {
+require('dotenv').config();
+
+server.listen(process.env.HAKARU_PORT, function () {
   const host = server.address().address;
   const port = server.address().port;
   console.log('Server listening at http://%s:%s', host, port);
