@@ -11,7 +11,7 @@ export default class Session {
     } while ( list.indexOf(random) >= 0 );
 
     this._id = random;
-    this._users = [];
+    this._users = {};
     list.push(this);
   }
 
@@ -20,11 +20,11 @@ export default class Session {
   }
 
   get users() {
-    return this._users;
+    return _.values(this._users);
   }
 
-  join(name) {
-    this._users.push(name);
+  join(socket_id, name) {
+    this._users[socket_id] = {name: name}
   }
 
   static list() {

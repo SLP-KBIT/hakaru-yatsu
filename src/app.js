@@ -40,7 +40,7 @@ io.on('connect', function(socket) {
   socket.on('join', function (data) {
     const session = Session.find(data.id);
 
-    session.join(data.name)
+    session.join(socket.id, data.name)
 
     // 送信元のユーザに現在のログインユーザの一覧を送信
     io.to(socket.id).emit('list-user', {users: session.users})
