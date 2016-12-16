@@ -47,6 +47,14 @@ io.on('connect', function(socket) {
     // 送信元のユーザ以外にユーザが増えたことを通知
     socket.broadcast.emit('joined', {name: data.name})
   });
+
+  socket.on('start', function (data) {
+    io.sockets.emit("start", {name: data.name});
+  });
+
+  socket.on('stop', function (data) {
+    io.sockets.emit("stop", {name: data.name});
+  });
 });
 
 server.listen(process.env.HAKARU_PORT || 3001, function () {

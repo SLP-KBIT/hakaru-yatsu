@@ -6,22 +6,63 @@ block content
 
   ul#user-list
 
+  button#start start
+  button#stop stop
   script(type='text/javascript' src='/socket.io/socket.io.js')
   script(type='text/javascript' data-name=name data-session-id=id id='main').
     (function() {
       var socket = io();
       var name = $('#main').data('name');
       var id = $('#main').data('session-id');
+
+      //------------------------------------------------------------------
+      // ログインに関する処理
+      //------------------------------------------------------------------
+      // ログインをサーバに通知
       socket.emit('join', {name: name, id: id});
+      // 他のユーザのログインを取得
       socket.on('joined', function (data) {
         console.log(data);
         $('#user-list').append('<li>' + data.name + '</li>');
       });
 
+      // 現在ログインしているユーザの一覧を取得
       socket.on('list-user', function (data) {
         console.log(data.users);
         data.users.forEach(function (name, index, arr) {
           $('#user-list').append('<li>' + name + '</li>');
+        });
+      });
+
+
+      //------------------------------------------------------------------
+      // 時間に関する処理
+      //------------------------------------------------------------------
+      $('#start').on("click", function () {
+        socket.emit('start', {name: name, id: id});
+        console.log('clicked');
+      });
+
+      socket.on('start', function (data) {
+        console.log(data);
+        $('li').each(function () {
+          if (data.name == $(this).text()) {
+            $(this).css('color', 'Red');
+          }
+        });
+      });
+
+      $('#stop').on("click", function () {
+        socket.emit('stop', {name: name, id: id});
+        console.log('clicked');
+      });
+
+      socket.on('stop', function (data) {
+        console.log(data);
+        $('li').each(function () {
+          if (data.name == $(this).text()) {
+            $(this).css('color', 'Black');
+          }
         });
       });
     }).call(this);
