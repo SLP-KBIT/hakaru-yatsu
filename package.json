@@ -23,6 +23,7 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "jade": "^1.11.0",
+    "lodash": "^4.17.2",
     "socket.io": "^1.7.1",
     "sprintf": "^0.1.5"
   },

@@ -35,9 +35,15 @@ app.get('/:id', (req, res) => {
 })
 
 io.on('connect', function(socket) {
-  console.log('connected');
   socket.on('join', function (data) {
-    io.sockets.emit('joined', {name: data.name})
+    const session = Session.find(data.id);
+
+    session.join(data.name)
+
+    // 送信元のユーザに現在のログインユーザの一覧を送信
+    io.to(socket.id).emit('list-user', {users: session.users})
+    // 送信元のユーザ以外にユーザが増えたことを通知
+    socket.broadcast.emit('joined', {name: data.name})
   });
 });
 
