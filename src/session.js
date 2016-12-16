@@ -24,7 +24,15 @@ export default class Session {
   }
 
   join(socket_id, name) {
-    this._users[socket_id] = {name: name}
+    this._users[socket_id] = {name: name};
+  }
+
+  remove(socket_id) {
+    delete this._users[socket_id];
+  }
+
+  find_user(socket_id) {
+    return this._users[socket_id];
   }
 
   static list() {

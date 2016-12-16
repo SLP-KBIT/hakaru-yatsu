@@ -37,8 +37,10 @@ app.get('/:id', (req, res) => {
 })
 
 io.on('connect', function(socket) {
+  var session = null;
+
   socket.on('join', function (data) {
-    const session = Session.find(data.id);
+    session = Session.find(data.id);
 
     session.join(socket.id, data.name)
 
@@ -46,6 +48,13 @@ io.on('connect', function(socket) {
     io.to(socket.id).emit('list-user', {users: session.users})
     // 送信元のユーザ以外にユーザが増えたことを通知
     socket.broadcast.emit('joined', {name: data.name})
+  });
+
+  socket.on('disconnect', function () {
+    var removed_user = session.find_user(socket.id);
+    // 送信元のユーザ以外にユーザが減ったことを通知
+    socket.broadcast.emit('removed', removed_user);
+    session.remove(socket.id);
   });
 });
 

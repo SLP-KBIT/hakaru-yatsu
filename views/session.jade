@@ -14,14 +14,23 @@ block content
       var id = $('#main').data('session-id');
       socket.emit('join', {name: name, id: id});
       socket.on('joined', function (data) {
-        console.log(data);
-        $('#user-list').append('<li>' + data.name + '</li>');
+        user = data
+        console.log(user);
+        $('#user-list').append('<li id=\"' + user.name + '\">' + user.name + '</li>');
       });
+
+      socket.on('disconnect', function () {});
 
       socket.on('list-user', function (data) {
         console.log(data.users);
         data.users.forEach(function (user, index, arr) {
-          $('#user-list').append('<li>' + user["name"] + '</li>');
+          $('#user-list').append('<li id=\"' + user.name + '\">' + user.name + '</li>');
         });
+      });
+
+      socket.on('removed', function (data) {
+        user = data
+        console.log(user);
+        $('#user-list #' + user.name).remove();
       });
     }).call(this);
