@@ -4,7 +4,8 @@ import path from 'path';
 import http from 'http';
 import socketio from 'socket.io';
 import Session from './session';
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const server = http.Server(app);
