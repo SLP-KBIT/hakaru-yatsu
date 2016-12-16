@@ -7,13 +7,21 @@ block content
   ul#user-list
 
   script(type='text/javascript' src='/socket.io/socket.io.js')
-  script(type='text/javascript' data-name=name id='main').
+  script(type='text/javascript' data-name=name data-session-id=id id='main').
     (function() {
       var socket = io();
       var name = $('#main').data('name');
-      socket.emit('join', {name: name});
+      var id = $('#main').data('session-id');
+      socket.emit('join', {name: name, id: id});
       socket.on('joined', function (data) {
         console.log(data);
         $('#user-list').append('<li>' + data.name + '</li>');
+      });
+
+      socket.on('list-user', function (data) {
+        console.log(data.users);
+        data.users.forEach(function (name, index, arr) {
+          $('#user-list').append('<li>' + name + '</li>');
+        });
       });
     }).call(this);
