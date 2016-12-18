@@ -14,6 +14,7 @@ const io = socketio(server);
 app.set('views', path.join(process.cwd(), 'views'))
 app.set('view engine', 'jade');
 app.use(bodyParser());
+app.use(express.static('public'));
 
 app.get('/', (req, res) => (
   res.render('index', { title: 'Hakaru Yatsu' })

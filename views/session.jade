@@ -4,6 +4,11 @@ block content
 
   h1= id
 
+  .digital#my-time 20
+
+  button#start START
+  button#stop STOP
+
   ul#user-list
 
   button#start start
@@ -14,11 +19,13 @@ block content
       var socket = io();
       var name = $('#main').data('name');
       var id = $('#main').data('session-id');
+      var isHakaring = false;
 
       //------------------------------------------------------------------
       // ログインに関する処理
       //------------------------------------------------------------------
       // ログインをサーバに通知
+
       socket.emit('join', {name: name, id: id});
       // 他のユーザのログインを取得
       socket.on('joined', function (data) {
@@ -33,7 +40,6 @@ block content
           $('#user-list').append('<li>' + name + '</li>');
         });
       });
-
 
       //------------------------------------------------------------------
       // 時間に関する処理
@@ -64,5 +70,23 @@ block content
             $(this).css('color', 'Black');
           }
         });
+      });
+
+      function decrementTime() {
+        var time = parseInt($('#my-time').text());
+        if ( time > 0 && isHakaring ) {
+          setTimeout(decrementTime, 1000);
+          time--;
+          $('#my-time').text(time);
+        }
+      }
+
+      $('#start').on('click', function () {
+        isHakaring = true;
+        decrementTime();
+      });
+
+      $('#stop').on('click', function () {
+        isHakaring = false;
       });
     }).call(this);
