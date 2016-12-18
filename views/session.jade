@@ -9,7 +9,7 @@ block content
   button#start START
   button#stop STOP
 
-  ul#user-list
+  table#user-list
 
   script(type='text/javascript' src='/socket.io/socket.io.js')
   script(type='text/javascript' data-name=name data-session-id=id id='main').
@@ -27,15 +27,24 @@ block content
       socket.emit('join', {name: name, id: id});
       // 他のユーザのログインを取得
       socket.on('joined', function (data) {
-        console.log(data);
-        $('#user-list').append('<li>' + data.name + '</li>');
+        user = data
+        console.log(user);
+        $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital">20</td>');
+      });
+
+      socket.on('disconnect', function () {});
+
+      socket.on('removed', function (data) {
+        user = data
+        console.log(user);
+        $('#user-list #' + user.name).remove();
       });
 
       // 現在ログインしているユーザの一覧を取得
       socket.on('list-user', function (data) {
         console.log(data.users);
-        data.users.forEach(function (name, index, arr) {
-          $('#user-list').append('<li>' + name + '</li>');
+        data.users.forEach(function (user, index, arr) {
+          $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital">20</td>');
         });
       });
 
@@ -51,19 +60,11 @@ block content
       });
 
       socket.on('start', function (data) {
-        $('li').each(function () {
-          if (data.name == $(this).text()) {
-            $(this).css('color', 'Red');
-          }
-        });
+        $('#' + data.name + ' .name').css('color', 'Red');
       });
 
       socket.on('stop', function (data) {
-        $('li').each(function () {
-          if (data.name == $(this).text()) {
-            $(this).css('color', 'Black');
-          }
-        });
+        $('#' + data.name + ' .name').css('color', 'Black');
       });
 
       function decrementTime() {
