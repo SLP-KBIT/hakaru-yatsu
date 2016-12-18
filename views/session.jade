@@ -44,11 +44,13 @@ block content
       //------------------------------------------------------------------
       $('#start').on("click", function () {
         socket.emit('start', {name: name, id: id});
-        console.log('clicked');
+      });
+
+      $('#stop').on("click", function () {
+        socket.emit('stop', {name: name, id: id});
       });
 
       socket.on('start', function (data) {
-        console.log(data);
         $('li').each(function () {
           if (data.name == $(this).text()) {
             $(this).css('color', 'Red');
@@ -56,13 +58,7 @@ block content
         });
       });
 
-      $('#stop').on("click", function () {
-        socket.emit('stop', {name: name, id: id});
-        console.log('clicked');
-      });
-
       socket.on('stop', function (data) {
-        console.log(data);
         $('li').each(function () {
           if (data.name == $(this).text()) {
             $(this).css('color', 'Black');
