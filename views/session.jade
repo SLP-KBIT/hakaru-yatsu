@@ -17,7 +17,7 @@ block content
       var socket = io();
       var name = $('#main').data('name');
       var id = $('#main').data('session-id');
-      var isHakaring = false;
+      var hakaringName = null;
 
       //------------------------------------------------------------------
       // ログインに関する処理
@@ -29,7 +29,7 @@ block content
       socket.on('joined', function (data) {
         user = data
         console.log(user);
-        $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital">20</td>');
+        $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital time">20</td>');
       });
 
       socket.on('disconnect', function () {});
@@ -44,7 +44,7 @@ block content
       socket.on('list-user', function (data) {
         console.log(data.users);
         data.users.forEach(function (user, index, arr) {
-          $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital">20</td>');
+          $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital time">20</td>');
         });
       });
 
@@ -60,28 +60,27 @@ block content
       });
 
       socket.on('start', function (data) {
+        if ( hakaringName != null ) { return ; }
         $('#' + data.name + ' .name').css('color', 'Red');
+        hakaringName = data.name;
+        decrementTime(hakaringName);
       });
 
       socket.on('stop', function (data) {
+        if ( data.name != hakaringName ) { return ; }
         $('#' + data.name + ' .name').css('color', 'Black');
+        hakaringName = null
       });
 
-      function decrementTime() {
-        var time = parseInt($('#my-time').text());
-        if ( time > 0 && isHakaring ) {
-          setTimeout(decrementTime, 1000);
+      function decrementTime(name) {
+        var timeDom = $('#' + name + ' .time')
+        var time = parseInt(timeDom.text());
+        if ( time > 0 && hakaringName != null ) {
+          setTimeout( function () {
+            decrementTime(name)
+          }, 1000);
           time--;
-          $('#my-time').text(time);
+          timeDom.text(time);
         }
       }
-
-      $('#start').on('click', function () {
-        isHakaring = true;
-        decrementTime();
-      });
-
-      $('#stop').on('click', function () {
-        isHakaring = false;
-      });
     }).call(this);
