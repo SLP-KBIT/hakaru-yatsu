@@ -4,8 +4,6 @@ block content
 
   h1= id
 
-  .digital#my-time 20
-
   button#start START
   button#stop STOP
 
@@ -29,7 +27,7 @@ block content
       socket.on('joined', function (data) {
         user = data
         console.log(user);
-        $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital time">20</td>');
+        $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital time">120</td>');
       });
 
       socket.on('disconnect', function () {});
@@ -44,7 +42,7 @@ block content
       socket.on('list-user', function (data) {
         console.log(data.users);
         data.users.forEach(function (user, index, arr) {
-          $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital time">20</td>');
+          $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital time">120</td>');
         });
       });
 
@@ -81,6 +79,9 @@ block content
           }, 1000);
           time--;
           timeDom.text(time);
+        }
+        if ( time == 0 && hakaringName == name ) {
+          socket.emit('stop', {name: name, id: id});
         }
       }
     }).call(this);
