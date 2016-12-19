@@ -4,7 +4,10 @@ block content
 
   h1= id
 
-  ul#user-list
+  button#start START
+  button#stop STOP
+
+  table#user-list
 
   script(type='text/javascript' src='/socket.io/socket.io.js')
   script(type='text/javascript' data-name=name data-session-id=id id='main').
@@ -12,25 +15,73 @@ block content
       var socket = io();
       var name = $('#main').data('name');
       var id = $('#main').data('session-id');
+      var hakaringName = null;
+
+      //------------------------------------------------------------------
+      // ログインに関する処理
+      //------------------------------------------------------------------
+      // ログインをサーバに通知
+
       socket.emit('join', {name: name, id: id});
+      // 他のユーザのログインを取得
       socket.on('joined', function (data) {
         user = data
         console.log(user);
-        $('#user-list').append('<li id=\"' + user.name + '\">' + user.name + '</li>');
+        $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital time">120</td>');
       });
 
       socket.on('disconnect', function () {});
-
-      socket.on('list-user', function (data) {
-        console.log(data.users);
-        data.users.forEach(function (user, index, arr) {
-          $('#user-list').append('<li id=\"' + user.name + '\">' + user.name + '</li>');
-        });
-      });
 
       socket.on('removed', function (data) {
         user = data
         console.log(user);
         $('#user-list #' + user.name).remove();
       });
+
+      // 現在ログインしているユーザの一覧を取得
+      socket.on('list-user', function (data) {
+        console.log(data.users);
+        data.users.forEach(function (user, index, arr) {
+          $('#user-list').append('<tr id=\"' + user.name + '\"><td class="name">' + user.name + '</td><td class="digital time">120</td>');
+        });
+      });
+
+      //------------------------------------------------------------------
+      // 時間に関する処理
+      //------------------------------------------------------------------
+      $('#start').on("click", function () {
+        socket.emit('start', {name: name, id: id});
+      });
+
+      $('#stop').on("click", function () {
+        socket.emit('stop', {name: name, id: id});
+      });
+
+      socket.on('start', function (data) {
+        if ( hakaringName != null ) { return ; }
+        $('#' + data.name + ' .name').css('color', 'Red');
+        hakaringName = data.name;
+        decrementTime(hakaringName);
+      });
+
+      socket.on('stop', function (data) {
+        if ( data.name != hakaringName ) { return ; }
+        $('#' + data.name + ' .name').css('color', 'Black');
+        hakaringName = null
+      });
+
+      function decrementTime(name) {
+        var timeDom = $('#' + name + ' .time')
+        var time = parseInt(timeDom.text());
+        if ( time > 0 && hakaringName != null ) {
+          setTimeout( function () {
+            decrementTime(name)
+          }, 1000);
+          time--;
+          timeDom.text(time);
+        }
+        if ( time == 0 && hakaringName == name ) {
+          socket.emit('stop', {name: name, id: id});
+        }
+      }
     }).call(this);

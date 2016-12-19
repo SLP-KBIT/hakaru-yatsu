@@ -14,6 +14,7 @@ const io = socketio(server);
 app.set('views', path.join(process.cwd(), 'views'))
 app.set('view engine', 'jade');
 app.use(bodyParser());
+app.use(express.static('public'));
 
 app.get('/', (req, res) => (
   res.render('index', { title: 'Hakaru Yatsu' })
@@ -48,6 +49,14 @@ io.on('connect', function(socket) {
     io.to(socket.id).emit('list-user', {users: session.users})
     // 送信元のユーザ以外にユーザが増えたことを通知
     socket.broadcast.emit('joined', {name: data.name})
+  });
+
+  socket.on('start', function (data) {
+    io.sockets.emit("start", {name: data.name});
+  });
+
+  socket.on('stop', function (data) {
+    io.sockets.emit("stop", {name: data.name});
   });
 
   socket.on('disconnect', function () {
